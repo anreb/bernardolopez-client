@@ -1,21 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Bernardo Lopez Portfolio</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EP0W3WXD39"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-EP0W3WXD39'); 
-  </script> 
-</head> 
-<body>
-  <h1>Welcome to my portfolio</h1>
-  <pre id="api-output">Loading API data...</pre>
-  <script src="main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bernardo Lopez - Portfolio</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-EP0W3WXD39"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-EP0W3WXD39");
+    </script>
+  </head>
+  <body>
+    <div class="app-container">
+      <nav class="navigation">
+        <button class="nav-button active" data-section="about">About me</button>
+        <button class="nav-button" data-section="ask">Ask me anything</button>
+      </nav>
+
+      <main class="main-content">
+        <!-- About me section -->
+        <section id="about" class="content-section active">
+          <div class="hero-section">
+            <h1 class="hero-title">Bernardo Lopez</h1>
+            <p class="hero-subtitle">Full Stack Developer & IT Professional</p>
+          </div>
+
+          <div class="about-section">
+            <h2 class="section-title">About me</h2>
+            <div class="about-content">
+              <p class="about-text">
+                Welcome to my portfolio! I'm a passionate developer with
+                expertise in building scalable web applications and solving
+                complex technical challenges.
+              </p>
+              <p class="about-text">
+                With years of experience in software development, I specialize
+                in creating efficient, user-friendly solutions that make a
+                difference.
+              </p>
+            </div>
+          </div>
+
+          <div class="companies-section">
+            <h2 class="section-title">Companies I've worked with</h2>
+            <div class="companies-grid">
+              <div class="company-card">
+                <div class="company-placeholder">Company 1</div>
+              </div>
+              <div class="company-card">
+                <div class="company-placeholder">Company 2</div>
+              </div>
+              <div class="company-card">
+                <div class="company-placeholder">Company 3</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ask me anything section - Full ChatGPT style -->
+        <section id="ask" class="content-section chat-section">
+          <div class="chat-messages" id="chatMessages">
+            <div class="message welcome-message">
+              <p>
+                Hello! I'm here to answer your questions. What would you like to
+                know?
+              </p>
+            </div>
+          </div>
+          <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+              <input
+                type="text"
+                id="chatInput"
+                class="chat-input"
+                placeholder="Message..."
+              />
+              <button id="sendButton" class="send-button">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M2.009 16.9l15.897-7.45c.411-.19.411-.811 0-1l-15.897-7.45c-.518-.25-1.009.141-.839.648l2.419 7.35-2.419 7.35c-.17.507.321.898.839.648z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
 </html>
