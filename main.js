@@ -1,6 +1,7 @@
 $(document).ready(function () {
   // Chat functionality
   const chatMessages = $("#chatMessages");
+  const chatMessagesContent = $(".chat-messages-content");
   const chatInput = $("#chatInput");
   const sendButton = $("#sendButton");
 
@@ -16,14 +17,14 @@ $(document).ready(function () {
       messageContent.text(content);
     }
     messageDiv.append(messageContent);
-    chatMessages.append(messageDiv);
+    chatMessagesContent.append(messageDiv);
     chatMessages.scrollTop(chatMessages[0].scrollHeight);
   }
 
   function showTypingIndicator() {
     const loadingMessage = $("<div>").addClass("message bot-message loading");
     loadingMessage.append($("<p>").text("Thinking..."));
-    chatMessages.append(loadingMessage);
+    chatMessagesContent.append(loadingMessage);
     chatMessages.scrollTop(chatMessages[0].scrollHeight);
     return loadingMessage;
   }
