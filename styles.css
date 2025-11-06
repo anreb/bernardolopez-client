@@ -25,42 +25,6 @@ body {
   overflow: hidden;
 }
 
-/* Navigation sidebar */
-.navigation {
-  background-color: #202123;
-  border-right: 1px solid #4d4d4f;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  gap: 0.5rem;
-  min-width: 200px;
-  max-width: 200px;
-  overflow-y: auto;
-  flex-shrink: 0;
-}
-
-.nav-button {
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  border: none;
-  background-color: transparent;
-  color: #ececf1;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  text-align: left;
-  font-weight: 500;
-}
-
-.nav-button:hover {
-  background-color: #343541;
-}
-
-.nav-button.active {
-  background-color: #343541;
-  color: #fff;
-}
-
 /* Main content area */
 .main-content {
   flex: 1;
@@ -68,6 +32,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   background-color: #343541;
+  width: 100%;
 }
 
 .content-section {
@@ -182,27 +147,26 @@ body {
   color: #ececf1;
 }
 
-/* Chat section - ChatGPT style */
-.chat-section {
-  display: none;
-  flex-direction: column;
-  padding: 0;
-  background-color: #343541;
-}
-
-.chat-section.active {
-  display: flex;
-}
-
+/* Chat messages section */
 .chat-messages {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 2rem;
+  padding: 2rem 0 2rem max(2rem, calc((100% - 768px) / 2));
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   -webkit-overflow-scrolling: touch;
+  width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  box-sizing: border-box;
+}
+
+.chat-messages:hover,
+.chat-messages:focus-within,
+.chat-messages.scrolling {
+  scrollbar-color: #565869 transparent;
 }
 
 .chat-messages::-webkit-scrollbar {
@@ -210,12 +174,21 @@ body {
 }
 
 .chat-messages::-webkit-scrollbar-track {
-  background: #202123;
+  background: transparent;
+  margin: 0;
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 0;
+  transition: background 0.3s ease;
+  margin: 0;
+}
+
+.chat-messages:hover::-webkit-scrollbar-thumb,
+.chat-messages:focus-within::-webkit-scrollbar-thumb,
+.chat-messages.scrolling::-webkit-scrollbar-thumb {
   background: #565869;
-  border-radius: 4px;
 }
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
@@ -258,6 +231,18 @@ body {
   margin-right: auto;
   margin-left: 0;
   align-self: flex-start;
+}
+
+.resume-link {
+  color: #19c37d;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.resume-link:hover {
+  color: #16a169;
+  text-decoration: underline;
 }
 
 .loading {
@@ -362,28 +347,6 @@ body {
 
 /* Mobile styles */
 @media (max-width: 768px) {
-  .app-container {
-    flex-direction: column;
-  }
-
-  .navigation {
-    flex-direction: row;
-    min-width: 100%;
-    max-width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #4d4d4f;
-    padding: 0.75rem;
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-
-  .nav-button {
-    white-space: nowrap;
-    min-width: fit-content;
-    flex: 1;
-    text-align: center;
-  }
-
   .content-section {
     padding: 1.5rem 1rem;
   }
@@ -447,11 +410,6 @@ body {
 
 /* Tablet styles */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .navigation {
-    min-width: 180px;
-    max-width: 180px;
-  }
-
   .content-section {
     padding: 2rem 1.5rem;
   }

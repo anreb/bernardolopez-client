@@ -1,32 +1,72 @@
 $(document).ready(function () {
-  // Navigation functionality
-  $(".nav-button").on("click", function () {
-    const targetSection = $(this).data("section");
-
-    // Update active nav button
-    $(".nav-button").removeClass("active");
-    $(this).addClass("active");
-
-    // Show target section, hide others
-    $(".content-section").removeClass("active");
-    $("#" + targetSection).addClass("active");
-  });
-
   // Chat functionality
   const chatMessages = $("#chatMessages");
   const chatInput = $("#chatInput");
   const sendButton = $("#sendButton");
 
-  function addMessage(content, isUser) {
+  function addMessage(content, isUser, isHtml = false) {
     const messageClass = isUser
       ? "message user-message"
       : "message bot-message";
     const messageDiv = $("<div>").addClass(messageClass);
-    const messageContent = $("<p>").text(content);
+    const messageContent = $("<p>");
+    if (isHtml) {
+      messageContent.html(content);
+    } else {
+      messageContent.text(content);
+    }
     messageDiv.append(messageContent);
     chatMessages.append(messageDiv);
     chatMessages.scrollTop(chatMessages[0].scrollHeight);
   }
+
+  function showTypingIndicator() {
+    const loadingMessage = $("<div>").addClass("message bot-message loading");
+    loadingMessage.append($("<p>").text("Thinking..."));
+    chatMessages.append(loadingMessage);
+    chatMessages.scrollTop(chatMessages[0].scrollHeight);
+    return loadingMessage;
+  }
+
+  function removeTypingIndicator(loadingMessage) {
+    loadingMessage.remove();
+  }
+
+  // Add initial messages with typing indicators
+  function initializeChat() {
+    // First message: About me
+    const loading1 = showTypingIndicator();
+    setTimeout(function () {
+      removeTypingIndicator(loading1);
+      const aboutMeText =
+        "Welcome to my portfolio! I'm a passionate developer with expertise in building scalable web applications and solving complex technical challenges. With years of experience in software development, I specialize in creating efficient, user-friendly solutions that make a difference.";
+      addMessage(aboutMeText, false);
+
+      // Second message: Resume PDF link
+      setTimeout(function () {
+        const loading2 = showTypingIndicator();
+        setTimeout(function () {
+          removeTypingIndicator(loading2);
+          const resumeLink =
+            'Feel free to check out my resume: <a href="resume.pdf" target="_blank" class="resume-link">Open Resume PDF</a>';
+          addMessage(resumeLink, false, true);
+        }, 1000);
+      }, 100);
+    }, 1000);
+  }
+
+  // Initialize chat on page load
+  initializeChat();
+
+  // Scrollbar visibility on scroll
+  let scrollTimeout;
+  chatMessages.on("scroll", function () {
+    chatMessages.addClass("scrolling");
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function () {
+      chatMessages.removeClass("scrolling");
+    }, 1000);
+  });
 
   function sendMessage() {
     const question = chatInput.val().trim();
@@ -40,11 +80,8 @@ $(document).ready(function () {
     chatInput.prop("disabled", true);
     sendButton.prop("disabled", true);
 
-    // Show loading message
-    const loadingMessage = $("<div>").addClass("message bot-message loading");
-    loadingMessage.append($("<p>").text("Thinking..."));
-    chatMessages.append(loadingMessage);
-    chatMessages.scrollTop(chatMessages[0].scrollHeight);
+    // Show loading message (for ChatGPT calls, it shows until response)
+    const loadingMessage = showTypingIndicator();
 
     // Send request to backend
     $.ajax({
@@ -54,7 +91,7 @@ $(document).ready(function () {
       data: JSON.stringify({ question: question }),
       success: function (response) {
         // Remove loading message
-        loadingMessage.remove();
+        removeTypingIndicator(loadingMessage);
 
         // Add bot response
         const answer =
@@ -63,7 +100,7 @@ $(document).ready(function () {
       },
       error: function (xhr, status, error) {
         // Remove loading message
-        loadingMessage.remove();
+        removeTypingIndicator(loadingMessage);
 
         // Handle error
         let errorMessage =
