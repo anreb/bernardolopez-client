@@ -1,4 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
+  function showToast(message) {
+    var toast = document.createElement("div");
+    toast.textContent = message;
+    toast.style.cssText =
+      "position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #333; color: #fff; padding: 12px 24px; border-radius: 8px; z-index: 10000; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);";
+    document.body.appendChild(toast);
+
+    setTimeout(function () {
+      toast.style.opacity = "0";
+      toast.style.transition = "opacity 0.3s ease";
+      setTimeout(function () {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 300);
+    }, 3000);
+  }
+  showToast("Running JavaScript code");
   var chatMessages = document.getElementById("chatMessages");
   var chatMessagesContent = document.querySelector(".chat-messages-content");
   var chatInput = document.getElementById("chatInput");
