@@ -4,10 +4,6 @@ const chatInput = document.getElementById("chatInput");
 const sendButton = document.getElementById("sendButton");
 const chatInputContainer = document.querySelector(".chat-input-container");
 
-if (!chatMessages || !chatMessagesContent || !chatInput || !sendButton) {
-  return;
-}
-
 function initKeyboardAvoidance() {
   chatInput.addEventListener("focus", function () {
     window.scrollTo({
