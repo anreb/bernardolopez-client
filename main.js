@@ -13,7 +13,7 @@ $(document).ready(function () {
   function initKeyboardAvoidance() {
     chatInput.on("focus", function () {
       window.scrollTo({
-        top: document.documentElement.scrollHeight,
+        top: 300,
         behavior: "smooth",
       });
     });
