@@ -1,11 +1,9 @@
 $(document).ready(function () {
-  // Chat functionality
   const chatMessages = $("#chatMessages");
   const chatMessagesContent = $(".chat-messages-content");
   const chatInput = $("#chatInput");
   const sendButton = $("#sendButton");
 
-  // Fix for mobile Chrome: Ensure input stays visible when keyboard appears
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     chatInput.on("focus", function () {
       setTimeout(function () {
@@ -42,9 +40,7 @@ $(document).ready(function () {
     loadingMessage.remove();
   }
 
-  // Add initial messages with typing indicators
   function initializeChat() {
-    // First message: About me
     const loading1 = showTypingIndicator();
     setTimeout(function () {
       removeTypingIndicator(loading1);
@@ -52,7 +48,6 @@ $(document).ready(function () {
         "Welcome to my portfolio! I'm a passionate developer with expertise in building scalable web applications and solving complex technical challenges. With years of experience in software development, I specialize in creating efficient, user-friendly solutions that make a difference.";
       addMessage(aboutMeText, false);
 
-      // Second message: Resume PDF link
       setTimeout(function () {
         const loading2 = showTypingIndicator();
         setTimeout(function () {
@@ -65,10 +60,8 @@ $(document).ready(function () {
     }, 1000);
   }
 
-  // Initialize chat on page load
   initializeChat();
 
-  // Scrollbar visibility on scroll
   let scrollTimeout;
   chatMessages.on("scroll", function () {
     chatMessages.addClass("scrolling");
@@ -82,37 +75,29 @@ $(document).ready(function () {
     const question = chatInput.val().trim();
     if (!question) return;
 
-    // Add user message
     addMessage(question, true);
     chatInput.val("");
 
-    // Disable input while processing
     chatInput.prop("disabled", true);
     sendButton.prop("disabled", true);
 
-    // Show loading message (for ChatGPT calls, it shows until response)
     const loadingMessage = showTypingIndicator();
 
-    // Send request to backend
     $.ajax({
-      url: "https://api.bernardolopez.me/api/chat", // Update this with your actual endpoint
+      url: "https://api.bernardolopez.me/api/chat",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ question: question }),
       success: function (response) {
-        // Remove loading message
         removeTypingIndicator(loadingMessage);
 
-        // Add bot response
         const answer =
           response.answer || response.message || "I received your question!";
         addMessage(answer, false);
       },
       error: function (xhr, status, error) {
-        // Remove loading message
         removeTypingIndicator(loadingMessage);
 
-        // Handle error
         let errorMessage =
           "Sorry, I encountered an error processing your question.";
         if (xhr.status === 0) {
@@ -124,7 +109,6 @@ $(document).ready(function () {
         addMessage(errorMessage, false);
       },
       complete: function () {
-        // Re-enable input
         chatInput.prop("disabled", false);
         sendButton.prop("disabled", false);
         chatInput.focus();
@@ -132,10 +116,8 @@ $(document).ready(function () {
     });
   }
 
-  // Send message on button click
   sendButton.on("click", sendMessage);
 
-  // Send message on Enter key
   chatInput.on("keypress", function (e) {
     if (e.which === 13 && !e.shiftKey) {
       e.preventDefault();
