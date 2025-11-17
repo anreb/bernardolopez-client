@@ -1,9 +1,24 @@
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("DOM loaded, initializing chat...");
+
   const chatMessages = document.getElementById("chatMessages");
   const chatMessagesContent = document.querySelector(".chat-messages-content");
   const chatInput = document.getElementById("chatInput");
   const sendButton = document.getElementById("sendButton");
   const chatInputContainer = document.querySelector(".chat-input-container");
+
+  console.log("Elements found:", {
+    chatMessages: !!chatMessages,
+    chatMessagesContent: !!chatMessagesContent,
+    chatInput: !!chatInput,
+    sendButton: !!sendButton,
+    chatInputContainer: !!chatInputContainer,
+  });
+
+  if (!chatMessages || !chatMessagesContent || !chatInput || !sendButton) {
+    console.error("Required elements not found!");
+    return;
+  }
 
   /**
    * Mobile Keyboard Avoidance Implementation
@@ -23,20 +38,26 @@ document.addEventListener("DOMContentLoaded", function () {
   initKeyboardAvoidance();
 
   function addMessage(content, isUser, isHtml = false) {
-    const messageClass = isUser
-      ? "message user-message"
-      : "message bot-message";
-    const messageDiv = document.createElement("div");
-    messageDiv.className = messageClass;
-    const messageContent = document.createElement("p");
-    if (isHtml) {
-      messageContent.innerHTML = content;
-    } else {
-      messageContent.textContent = content;
+    try {
+      console.log("Adding message:", content.substring(0, 50));
+      const messageClass = isUser
+        ? "message user-message"
+        : "message bot-message";
+      const messageDiv = document.createElement("div");
+      messageDiv.className = messageClass;
+      const messageContent = document.createElement("p");
+      if (isHtml) {
+        messageContent.innerHTML = content;
+      } else {
+        messageContent.textContent = content;
+      }
+      messageDiv.appendChild(messageContent);
+      chatMessagesContent.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      console.log("Message added successfully");
+    } catch (error) {
+      console.error("Error adding message:", error);
     }
-    messageDiv.appendChild(messageContent);
-    chatMessagesContent.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
   function showTypingIndicator() {
@@ -55,11 +76,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function initializeChat() {
+    console.log("Initializing chat...");
     const loading1 = showTypingIndicator();
     setTimeout(function () {
       removeTypingIndicator(loading1);
       const aboutMeText =
         "Welcome to my portfolio! I'm a passionate developer with expertise in building scalable web applications and solving complex technical challenges. With years of experience in software development, I specialize in creating efficient, user-friendly solutions that make a difference.";
+      console.log("Adding first message");
       addMessage(aboutMeText, false);
 
       setTimeout(function () {
@@ -86,7 +109,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function sendMessage() {
+    console.log("sendMessage called");
     const question = chatInput.value.trim();
+    console.log("Question:", question);
     if (!question) return;
 
     addMessage(question, true);
@@ -118,6 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
         addMessage(answer, false);
       })
       .catch(function (error) {
+        console.error("Fetch error:", error);
         removeTypingIndicator(loadingMessage);
 
         let errorMessage =
@@ -137,12 +163,19 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  sendButton.addEventListener("click", sendMessage);
+  sendButton.addEventListener("click", function (e) {
+    console.log("Send button clicked");
+    e.preventDefault();
+    sendMessage();
+  });
 
   chatInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && !e.shiftKey) {
+      console.log("Enter key pressed");
       e.preventDefault();
       sendMessage();
     }
   });
+
+  console.log("Chat initialization complete");
 });
