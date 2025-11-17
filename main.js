@@ -5,10 +5,6 @@ $(document).ready(function () {
   const sendButton = $("#sendButton");
   const chatInputContainer = $(".chat-input-container");
 
-  chatInput.on("focus", function () {
-    window.scrollTo(0, 300);
-  });
-
   function addMessage(content, isUser, isHtml = false) {
     const messageClass = isUser
       ? "message user-message"
