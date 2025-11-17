@@ -39,11 +39,12 @@ $(document).ready(function () {
         // Move input container above keyboard
         chatInputContainer.css("bottom", `${visualBottom}px`);
         
-        // Ensure input is visible by scrolling if needed
-        const inputRect = chatInput[0].getBoundingClientRect();
-        if (inputRect.bottom > viewportHeight) {
-          window.scrollTo(0, window.scrollY + (inputRect.bottom - viewportHeight) + 20);
-        }
+        // Scroll chat messages to bottom to keep recent messages visible
+        setTimeout(() => {
+          if (chatMessages[0]) {
+            chatMessages.scrollTop(chatMessages[0].scrollHeight);
+          }
+        }, 50);
       };
 
       // Listen for viewport changes (keyboard open/close)
@@ -77,13 +78,10 @@ $(document).ready(function () {
         if (heightDiff > 150) {
           chatInputContainer.css("bottom", "0px");
           
-          // Scroll to keep input visible
+          // Scroll chat messages to bottom
           setTimeout(() => {
-            const inputRect = chatInput[0].getBoundingClientRect();
-            const viewportHeight = window.innerHeight;
-            
-            if (inputRect.bottom > viewportHeight) {
-              window.scrollTo(0, window.scrollY + (inputRect.bottom - viewportHeight) + 20);
+            if (chatMessages[0]) {
+              chatMessages.scrollTop(chatMessages[0].scrollHeight);
             }
           }, 100);
         } else {
