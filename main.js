@@ -91,32 +91,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1000);
   });
 
-  function showToast(message) {
-    if (!document.body) {
-      return;
-    }
-    var toast = document.createElement("div");
-    toast.textContent = message;
-    toast.style.cssText =
-      "position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #333; color: #fff; padding: 12px 24px; border-radius: 8px; z-index: 10000; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); max-width: 80%;";
-    document.body.appendChild(toast);
-
-    setTimeout(function () {
-      toast.style.opacity = "0";
-      toast.style.transition = "opacity 0.3s ease";
-      setTimeout(function () {
-        if (toast.parentNode) {
-          toast.parentNode.removeChild(toast);
-        }
-      }, 300);
-    }, 3000);
-  }
-
   function sendMessage() {
     var question = chatInput.value.trim();
     if (!question) return;
 
-    showToast("Sending: " + question.substring(0, 30));
     addMessage(question, true);
     chatInput.value = "";
 
@@ -133,20 +111,15 @@ document.addEventListener("DOMContentLoaded", function () {
     xhr.onload = function () {
       removeTypingIndicator(loadingMessage);
 
-      showToast("Status: " + xhr.status);
-
       if (xhr.status >= 200 && xhr.status < 300) {
         try {
           var data = JSON.parse(xhr.responseText);
           var answer = data.message || "I received your question!";
           addMessage(answer, false);
-          showToast("Response received successfully");
         } catch (e) {
-          showToast("Parse error: " + e.message);
           addMessage("Error parsing response: " + e.message, false);
         }
       } else {
-        showToast("Error status: " + xhr.status);
         var errorMessage =
           "Sorry, I encountered an error processing your question. (Status: " +
           xhr.status +
@@ -158,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var errorData = JSON.parse(xhr.responseText);
             errorMessage = errorData.error || errorMessage;
           } catch (e) {
-            showToast("Error parsing: " + e.message);
+            // Silently ignore error
           }
         }
         addMessage(errorMessage, false);
@@ -176,7 +149,6 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     xhr.onerror = function () {
-      showToast("XHR Network Error - CORS or connection issue");
       removeTypingIndicator(loadingMessage);
       addMessage(
         "Unable to connect to the server. Please check your connection.",
