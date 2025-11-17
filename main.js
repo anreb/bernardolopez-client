@@ -8,124 +8,15 @@ $(document).ready(function () {
   /**
    * Mobile Keyboard Avoidance Implementation
    *
-   * Ensures chat input stays visible above the mobile keyboard on:
-   * - iOS Safari, iOS Chrome, Android Chrome
-   *
-   * Uses visualViewport API (modern) with window.resize fallback (legacy)
+   * Scrolls to bottom when chat input is focused to keep it visible above keyboard
    */
   function initKeyboardAvoidance() {
-    const isMobile =
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
-
-    if (!isMobile) {
-      return;
-    }
-
-    let initialViewportHeight = window.innerHeight;
-
-    // Modern approach: Visual Viewport API (iOS 13+, Chrome 61+)
-    if (window.visualViewport) {
-      /**
-       * Updates input position when keyboard opens/closes
-       * Calculates distance from bottom based on visible viewport
-       */
-      let isAdjustingScroll = false;
-
-      const updateInputPosition = () => {
-        if (isAdjustingScroll) return;
-
-        const viewport = window.visualViewport;
-        const viewportHeight = viewport.height;
-        const offsetTop = viewport.offsetTop;
-
-        // Calculate how far keyboard pushes content up
-        const visualBottom = window.innerHeight - (viewportHeight + offsetTop);
-
-        // Move input container above keyboard
-        chatInputContainer.css("bottom", `${visualBottom}px`);
-
-        // Scroll window down to keep input visible above keyboard
-        if (visualBottom > 0) {
-          isAdjustingScroll = true;
-          setTimeout(() => {
-            const inputRect = chatInputContainer[0].getBoundingClientRect();
-            const inputBottom = inputRect.bottom;
-
-            // If input is below visible viewport, scroll down
-            if (inputBottom > viewportHeight) {
-              const scrollAmount = inputBottom - viewportHeight + 20;
-              window.scrollBy(0, scrollAmount);
-            }
-
-            setTimeout(() => {
-              isAdjustingScroll = false;
-            }, 200);
-          }, 50);
-        }
-      };
-
-      // Listen for viewport changes (keyboard open/close)
-      // Only use resize, not scroll to avoid feedback loops
-      window.visualViewport.addEventListener("resize", updateInputPosition);
-
-      // Update position when input gains focus
-      // Multiple timeouts handle different keyboard animation speeds
-      chatInput.on("focus", function () {
-        setTimeout(updateInputPosition, 100);
+    chatInput.on("focus", function () {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
       });
-
-      // Reset position when keyboard closes
-      chatInput.on("blur", function () {
-        setTimeout(() => {
-          chatInputContainer.css("bottom", "0px");
-        }, 100);
-      });
-    } else {
-      // Fallback approach: window.resize (older browsers)
-      /**
-       * Detects keyboard by viewport height change
-       * If viewport shrinks >150px, keyboard is likely open
-       */
-      const handleResize = () => {
-        const currentHeight = window.innerHeight;
-        const heightDiff = initialViewportHeight - currentHeight;
-
-        // Keyboard detection threshold: 150px viewport shrinkage
-        if (heightDiff > 150) {
-          chatInputContainer.css("bottom", "0px");
-          e;
-          setTimeout(() => {
-            const inputRect = chatInputContainer[0].getBoundingClientRect();
-            const inputBottom = inputRect.bottom;
-            const viewportHeight = window.innerHeight;
-
-            // If input is below visible viewport, scroll down
-            if (inputBottom > viewportHeight) {
-              const scrollAmount = inputBottom - viewportHeight + 20;
-              window.scrollBy(0, scrollAmount);
-            }
-          }, 100);
-        } else {
-          // Keyboard closed, reset position
-          chatInputContainer.css("bottom", "0px");
-        }
-      };
-
-      window.addEventListener("resize", handleResize);
-
-      chatInput.on("focus", function () {
-        setTimeout(handleResize, 300);
-      });
-
-      chatInput.on("blur", function () {
-        setTimeout(() => {
-          chatInputContainer.css("bottom", "0px");
-          initialViewportHeight = window.innerHeight;
-        }, 100);
-      });
-    }
+    });
   }
 
   // Initialize keyboard avoidance on page load
