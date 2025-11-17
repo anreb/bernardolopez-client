@@ -1,31 +1,52 @@
-$(document).ready(function () {
-  const chatMessages = $("#chatMessages");
-  const chatMessagesContent = $(".chat-messages-content");
-  const chatInput = $("#chatInput");
-  const sendButton = $("#sendButton");
-  const chatInputContainer = $(".chat-input-container");
+document.addEventListener("DOMContentLoaded", function () {
+  const chatMessages = document.getElementById("chatMessages");
+  const chatMessagesContent = document.querySelector(".chat-messages-content");
+  const chatInput = document.getElementById("chatInput");
+  const sendButton = document.getElementById("sendButton");
+  const chatInputContainer = document.querySelector(".chat-input-container");
+
+  /**
+   * Mobile Keyboard Avoidance Implementation
+   *
+   * Scrolls to bottom when chat input is focused to keep it visible above keyboard
+   */
+  function initKeyboardAvoidance() {
+    chatInput.addEventListener("focus", function () {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
+    });
+  }
+
+  // Initialize keyboard avoidance on page load
+  initKeyboardAvoidance();
 
   function addMessage(content, isUser, isHtml = false) {
     const messageClass = isUser
       ? "message user-message"
       : "message bot-message";
-    const messageDiv = $("<div>").addClass(messageClass);
-    const messageContent = $("<p>");
+    const messageDiv = document.createElement("div");
+    messageDiv.className = messageClass;
+    const messageContent = document.createElement("p");
     if (isHtml) {
-      messageContent.html(content);
+      messageContent.innerHTML = content;
     } else {
-      messageContent.text(content);
+      messageContent.textContent = content;
     }
-    messageDiv.append(messageContent);
-    chatMessagesContent.append(messageDiv);
-    chatMessages.scrollTop(chatMessages[0].scrollHeight);
+    messageDiv.appendChild(messageContent);
+    chatMessagesContent.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
   function showTypingIndicator() {
-    const loadingMessage = $("<div>").addClass("message bot-message loading");
-    loadingMessage.append($("<p>").text("Thinking..."));
-    chatMessagesContent.append(loadingMessage);
-    chatMessages.scrollTop(chatMessages[0].scrollHeight);
+    const loadingMessage = document.createElement("div");
+    loadingMessage.className = "message bot-message loading";
+    const messageContent = document.createElement("p");
+    messageContent.textContent = "Thinking...";
+    loadingMessage.appendChild(messageContent);
+    chatMessagesContent.appendChild(loadingMessage);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
     return loadingMessage;
   }
 
@@ -56,62 +77,69 @@ $(document).ready(function () {
   initializeChat();
 
   let scrollTimeout;
-  chatMessages.on("scroll", function () {
-    chatMessages.addClass("scrolling");
+  chatMessages.addEventListener("scroll", function () {
+    chatMessages.classList.add("scrolling");
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(function () {
-      chatMessages.removeClass("scrolling");
+      chatMessages.classList.remove("scrolling");
     }, 1000);
   });
 
   function sendMessage() {
-    const question = chatInput.val().trim();
+    const question = chatInput.value.trim();
     if (!question) return;
 
     addMessage(question, true);
-    chatInput.val("");
+    chatInput.value = "";
 
-    chatInput.prop("disabled", true);
-    sendButton.prop("disabled", true);
+    chatInput.disabled = true;
+    sendButton.disabled = true;
 
     const loadingMessage = showTypingIndicator();
 
-    $.ajax({
-      url: "https://api.bernardolopez.me/api/chat",
+    fetch("https://api.bernardolopez.me/api/chat", {
       method: "POST",
-      contentType: "application/json",
-      data: JSON.stringify({ question: question }),
-      success: function (response) {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question: question }),
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("HTTP error! status: " + response.status);
+        }
+        return response.json();
+      })
+      .then(function (data) {
         removeTypingIndicator(loadingMessage);
 
         const answer =
-          response.answer || response.message || "I received your question!";
+          data.answer || data.message || "I received your question!";
         addMessage(answer, false);
-      },
-      error: function (xhr, status, error) {
+      })
+      .catch(function (error) {
         removeTypingIndicator(loadingMessage);
 
         let errorMessage =
           "Sorry, I encountered an error processing your question.";
-        if (xhr.status === 0) {
+        if (error.message.includes("Failed to fetch")) {
           errorMessage =
             "Unable to connect to the server. Please check your connection.";
-        } else if (xhr.status >= 500) {
+        } else if (error.message.includes("status: 5")) {
           errorMessage = "Server error. Please try again later.";
         }
         addMessage(errorMessage, false);
-      },
-      complete: function () {
-        chatInput.prop("disabled", false);
-        sendButton.prop("disabled", false);
+      })
+      .finally(function () {
+        chatInput.disabled = false;
+        sendButton.disabled = false;
         chatInput.focus();
-      },
-    });
+      });
   }
 
-  sendButton.on("click", sendMessage);
+  sendButton.addEventListener("click", sendMessage);
 
-  chatInput.on("keypress", function (e) {
+  chatInput.addEventListener("keypress", function (e) {
     if (e.which === 13 && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
