@@ -76,14 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   initializeChat();
 
-  // Test messages to verify functionality
-  setTimeout(function () {
-    addMessage("This is a test user message on the right", true);
-    setTimeout(function () {
-      addMessage("This is a test bot response on the left", false);
-    }, 500);
-  }, 2500);
-
   let scrollTimeout;
   chatMessages.addEventListener("scroll", function () {
     chatMessages.classList.add("scrolling");

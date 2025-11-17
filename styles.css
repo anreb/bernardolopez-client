@@ -205,6 +205,7 @@ body {
   width: 100%;
   margin: 0 auto;
   padding: 0 1.5rem;
+  padding-bottom: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -461,6 +462,7 @@ body {
 
   .chat-messages-content {
     padding: 0 1rem;
+    padding-bottom: 2rem;
   }
 
   .message {
