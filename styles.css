@@ -9,6 +9,9 @@ html,
 body {
   height: 100%;
   overflow: hidden;
+  /* Fix for mobile Chrome viewport issues */
+  height: 100dvh;
+  height: -webkit-fill-available;
 }
 
 body {
@@ -22,6 +25,8 @@ body {
 .app-container {
   display: flex;
   height: 100vh;
+  height: 100dvh;
+  height: -webkit-fill-available;
   overflow: hidden;
 }
 
@@ -33,6 +38,8 @@ body {
   overflow: hidden;
   background-color: #343541;
   width: 100%;
+  min-height: 0;
+  position: relative;
 }
 
 /* Chat header */
@@ -313,6 +320,10 @@ body {
   padding: 1.5rem;
   background-color: #343541;
   border-top: 1px solid #565869;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .chat-input-wrapper {
@@ -451,6 +462,10 @@ body {
 
   .chat-input-container {
     padding: 1rem;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
   }
 
   .chat-input-wrapper {

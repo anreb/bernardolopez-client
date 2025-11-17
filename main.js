@@ -5,6 +5,15 @@ $(document).ready(function () {
   const chatInput = $("#chatInput");
   const sendButton = $("#sendButton");
 
+  // Fix for mobile Chrome: Ensure input stays visible when keyboard appears
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    chatInput.on("focus", function () {
+      setTimeout(function () {
+        chatInput[0].scrollIntoView({ behavior: "smooth", block: "end" });
+      }, 300);
+    });
+  }
+
   function addMessage(content, isUser, isHtml = false) {
     const messageClass = isUser
       ? "message user-message"
