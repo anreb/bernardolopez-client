@@ -5,19 +5,9 @@ $(document).ready(function () {
   const sendButton = $("#sendButton");
   const chatInputContainer = $(".chat-input-container");
 
-  /**
-   * Mobile Keyboard Avoidance Implementation
-   *
-   * Scrolls to bottom when chat input is focused to keep it visible above keyboard
-   */
-  function initKeyboardAvoidance() {
-    chatInput.on("focus", function () {
-      window.scrollTo(0, 300);
-    });
-  }
-
-  // Initialize keyboard avoidance on page load
-  initKeyboardAvoidance();
+  chatInput.on("focus", function () {
+    window.scrollTo(0, 300);
+  });
 
   function addMessage(content, isUser, isHtml = false) {
     const messageClass = isUser
