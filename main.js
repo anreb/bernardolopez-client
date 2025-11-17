@@ -98,17 +98,17 @@ $(document).ready(function () {
           chatInputContainer.css("bottom", "0px");
 
           // Scroll window down to keep input visible
-          setTimeout(() => {
-            const inputRect = chatInputContainer[0].getBoundingClientRect();
-            const inputBottom = inputRect.bottom;
-            const viewportHeight = window.innerHeight;
+          // setTimeout(() => {
+          //   const inputRect = chatInputContainer[0].getBoundingClientRect();
+          //   const inputBottom = inputRect.bottom;
+          //   const viewportHeight = window.innerHeight;
 
-            // If input is below visible viewport, scroll down
-            if (inputBottom > viewportHeight) {
-              const scrollAmount = inputBottom - viewportHeight + 20;
-              window.scrollBy(0, scrollAmount);
-            }
-          }, 100);
+          //   // If input is below visible viewport, scroll down
+          //   if (inputBottom > viewportHeight) {
+          //     const scrollAmount = inputBottom - viewportHeight + 20;
+          //     window.scrollBy(0, scrollAmount);
+          //   }
+          // }, 100);
         } else {
           // Keyboard closed, reset position
           chatInputContainer.css("bottom", "0px");
