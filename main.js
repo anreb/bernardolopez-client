@@ -74,7 +74,6 @@ $(document).ready(function () {
       // Multiple timeouts handle different keyboard animation speeds
       chatInput.on("focus", function () {
         setTimeout(updateInputPosition, 100);
-        setTimeout(updateInputPosition, 300);
       });
 
       // Reset position when keyboard closes
@@ -96,19 +95,18 @@ $(document).ready(function () {
         // Keyboard detection threshold: 150px viewport shrinkage
         if (heightDiff > 150) {
           chatInputContainer.css("bottom", "0px");
+          e;
+          setTimeout(() => {
+            const inputRect = chatInputContainer[0].getBoundingClientRect();
+            const inputBottom = inputRect.bottom;
+            const viewportHeight = window.innerHeight;
 
-          // Scroll window down to keep input visible
-          // setTimeout(() => {
-          //   const inputRect = chatInputContainer[0].getBoundingClientRect();
-          //   const inputBottom = inputRect.bottom;
-          //   const viewportHeight = window.innerHeight;
-
-          //   // If input is below visible viewport, scroll down
-          //   if (inputBottom > viewportHeight) {
-          //     const scrollAmount = inputBottom - viewportHeight + 20;
-          //     window.scrollBy(0, scrollAmount);
-          //   }
-          // }, 100);
+            // If input is below visible viewport, scroll down
+            if (inputBottom > viewportHeight) {
+              const scrollAmount = inputBottom - viewportHeight + 20;
+              window.scrollBy(0, scrollAmount);
+            }
+          }, 100);
         } else {
           // Keyboard closed, reset position
           chatInputContainer.css("bottom", "0px");
