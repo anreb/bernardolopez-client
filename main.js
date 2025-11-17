@@ -3,14 +3,112 @@ $(document).ready(function () {
   const chatMessagesContent = $(".chat-messages-content");
   const chatInput = $("#chatInput");
   const sendButton = $("#sendButton");
+  const chatInputContainer = $(".chat-input-container");
 
-  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    chatInput.on("focus", function () {
-      setTimeout(function () {
-        chatInput[0].scrollIntoView({ behavior: "smooth", block: "end" });
-      }, 300);
-    });
+  /**
+   * Mobile Keyboard Avoidance Implementation
+   * 
+   * Ensures chat input stays visible above the mobile keyboard on:
+   * - iOS Safari, iOS Chrome, Android Chrome
+   * 
+   * Uses visualViewport API (modern) with window.resize fallback (legacy)
+   */
+  function initKeyboardAvoidance() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+      return;
+    }
+
+    let initialViewportHeight = window.innerHeight;
+    
+    // Modern approach: Visual Viewport API (iOS 13+, Chrome 61+)
+    if (window.visualViewport) {
+      /**
+       * Updates input position when keyboard opens/closes
+       * Calculates distance from bottom based on visible viewport
+       */
+      const updateInputPosition = () => {
+        const viewport = window.visualViewport;
+        const viewportHeight = viewport.height;
+        const offsetTop = viewport.offsetTop;
+        
+        // Calculate how far keyboard pushes content up
+        const visualBottom = window.innerHeight - (viewportHeight + offsetTop);
+        
+        // Move input container above keyboard
+        chatInputContainer.css("bottom", `${visualBottom}px`);
+        
+        // Ensure input is visible by scrolling if needed
+        const inputRect = chatInput[0].getBoundingClientRect();
+        if (inputRect.bottom > viewportHeight) {
+          window.scrollTo(0, window.scrollY + (inputRect.bottom - viewportHeight) + 20);
+        }
+      };
+
+      // Listen for viewport changes (keyboard open/close)
+      window.visualViewport.addEventListener("resize", updateInputPosition);
+      window.visualViewport.addEventListener("scroll", updateInputPosition);
+      
+      // Update position when input gains focus
+      // Multiple timeouts handle different keyboard animation speeds
+      chatInput.on("focus", function () {
+        setTimeout(updateInputPosition, 100);
+        setTimeout(updateInputPosition, 300);
+      });
+      
+      // Reset position when keyboard closes
+      chatInput.on("blur", function () {
+        setTimeout(() => {
+          chatInputContainer.css("bottom", "0px");
+        }, 100);
+      });
+    } else {
+      // Fallback approach: window.resize (older browsers)
+      /**
+       * Detects keyboard by viewport height change
+       * If viewport shrinks >150px, keyboard is likely open
+       */
+      const handleResize = () => {
+        const currentHeight = window.innerHeight;
+        const heightDiff = initialViewportHeight - currentHeight;
+        
+        // Keyboard detection threshold: 150px viewport shrinkage
+        if (heightDiff > 150) {
+          chatInputContainer.css("bottom", "0px");
+          
+          // Scroll to keep input visible
+          setTimeout(() => {
+            const inputRect = chatInput[0].getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            
+            if (inputRect.bottom > viewportHeight) {
+              window.scrollTo(0, window.scrollY + (inputRect.bottom - viewportHeight) + 20);
+            }
+          }, 100);
+        } else {
+          // Keyboard closed, reset position
+          chatInputContainer.css("bottom", "0px");
+        }
+      };
+
+      window.addEventListener("resize", handleResize);
+      
+      chatInput.on("focus", function () {
+        setTimeout(handleResize, 300);
+      });
+      
+      chatInput.on("blur", function () {
+        setTimeout(() => {
+          chatInputContainer.css("bottom", "0px");
+          initialViewportHeight = window.innerHeight;
+        }, 100);
+      });
+    }
   }
+
+  // Initialize keyboard avoidance on page load
+  initKeyboardAvoidance();
 
   function addMessage(content, isUser, isHtml = false) {
     const messageClass = isUser

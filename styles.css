@@ -180,10 +180,17 @@ body {
   color: #ececf1;
 }
 
+/**
+ * Chat Messages Container
+ * 
+ * Extra bottom padding prevents content from being hidden
+ * behind the fixed chat input container
+ */
 .chat-messages {
   flex: 1;
   overflow-y: auto;
   padding: 2rem 0;
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   -webkit-overflow-scrolling: touch;
@@ -301,14 +308,31 @@ body {
   }
 }
 
+/**
+ * Chat Input Container - Mobile Keyboard Avoidance
+ * 
+ * Fixed positioning allows dynamic bottom adjustment via JS
+ * when mobile keyboard opens, moving input above keyboard
+ * 
+ * Key features:
+ * - position: fixed for reliable keyboard avoidance
+ * - transition: smooth animation when keyboard opens/closes
+ * - env(safe-area-inset-bottom): iOS notch/home indicator support
+ * - will-change: GPU acceleration for smooth animations
+ * - z-index: 1000 ensures input stays on top
+ */
 .chat-input-container {
   padding: 1.5rem;
   background-color: #343541;
   border-top: 1px solid #565869;
-  position: sticky;
+  position: fixed;
+  left: 0;
+  right: 0;
   bottom: 0;
-  z-index: 10;
-  flex-shrink: 0;
+  z-index: 1000;
+  transition: bottom 0.2s ease-out;
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  will-change: bottom;
 }
 
 .chat-input-wrapper {
@@ -444,12 +468,22 @@ body {
     padding: 0.875rem 1.25rem;
   }
 
+  /**
+   * Mobile-specific adjustments for chat input
+   * Reduced padding for smaller screens
+   * Safe-area-inset ensures compatibility with iOS notches
+   */
   .chat-input-container {
     padding: 1rem;
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    position: sticky;
-    bottom: 0;
-    z-index: 10;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  /**
+   * Mobile-specific bottom padding for chat messages
+   * Prevents content from being hidden behind fixed input
+   */
+  .chat-messages {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
   }
 
   .chat-input-wrapper {
