@@ -55,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function initializeChat() {
-    console.log("Initializing chat...");
     const loading1 = showTypingIndicator();
     setTimeout(function () {
       removeTypingIndicator(loading1);
