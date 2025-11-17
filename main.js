@@ -7,21 +7,24 @@ $(document).ready(function () {
 
   /**
    * Mobile Keyboard Avoidance Implementation
-   * 
+   *
    * Ensures chat input stays visible above the mobile keyboard on:
    * - iOS Safari, iOS Chrome, Android Chrome
-   * 
+   *
    * Uses visualViewport API (modern) with window.resize fallback (legacy)
    */
   function initKeyboardAvoidance() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
     if (!isMobile) {
       return;
     }
 
     let initialViewportHeight = window.innerHeight;
-    
+
     // Modern approach: Visual Viewport API (iOS 13+, Chrome 61+)
     if (window.visualViewport) {
       /**
@@ -32,17 +35,22 @@ $(document).ready(function () {
         const viewport = window.visualViewport;
         const viewportHeight = viewport.height;
         const offsetTop = viewport.offsetTop;
-        
+
         // Calculate how far keyboard pushes content up
         const visualBottom = window.innerHeight - (viewportHeight + offsetTop);
-        
+
         // Move input container above keyboard
         chatInputContainer.css("bottom", `${visualBottom}px`);
-        
-        // Scroll chat messages to bottom to keep recent messages visible
+
+        // Scroll window down to keep input visible above keyboard
         setTimeout(() => {
-          if (chatMessages[0]) {
-            chatMessages.scrollTop(chatMessages[0].scrollHeight);
+          const inputRect = chatInputContainer[0].getBoundingClientRect();
+          const inputBottom = inputRect.bottom;
+
+          // If input is below visible viewport, scroll down
+          if (inputBottom > viewportHeight) {
+            const scrollAmount = inputBottom - viewportHeight + 20;
+            window.scrollBy(0, scrollAmount);
           }
         }, 50);
       };
@@ -50,14 +58,14 @@ $(document).ready(function () {
       // Listen for viewport changes (keyboard open/close)
       window.visualViewport.addEventListener("resize", updateInputPosition);
       window.visualViewport.addEventListener("scroll", updateInputPosition);
-      
+
       // Update position when input gains focus
       // Multiple timeouts handle different keyboard animation speeds
       chatInput.on("focus", function () {
         setTimeout(updateInputPosition, 100);
         setTimeout(updateInputPosition, 300);
       });
-      
+
       // Reset position when keyboard closes
       chatInput.on("blur", function () {
         setTimeout(() => {
@@ -73,15 +81,21 @@ $(document).ready(function () {
       const handleResize = () => {
         const currentHeight = window.innerHeight;
         const heightDiff = initialViewportHeight - currentHeight;
-        
+
         // Keyboard detection threshold: 150px viewport shrinkage
         if (heightDiff > 150) {
           chatInputContainer.css("bottom", "0px");
-          
-          // Scroll chat messages to bottom
+
+          // Scroll window down to keep input visible
           setTimeout(() => {
-            if (chatMessages[0]) {
-              chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            const inputRect = chatInputContainer[0].getBoundingClientRect();
+            const inputBottom = inputRect.bottom;
+            const viewportHeight = window.innerHeight;
+
+            // If input is below visible viewport, scroll down
+            if (inputBottom > viewportHeight) {
+              const scrollAmount = inputBottom - viewportHeight + 20;
+              window.scrollBy(0, scrollAmount);
             }
           }, 100);
         } else {
@@ -91,11 +105,11 @@ $(document).ready(function () {
       };
 
       window.addEventListener("resize", handleResize);
-      
+
       chatInput.on("focus", function () {
         setTimeout(handleResize, 300);
       });
-      
+
       chatInput.on("blur", function () {
         setTimeout(() => {
           chatInputContainer.css("bottom", "0px");
