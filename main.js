@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(function () {
           removeTypingIndicator(loading2);
           var resumeLink =
-            'Feel free to check out my resume: <a href="resume.pdf" target="_blank" class="resume-link">Open Resume PDF</a>';
+            'Feel free to check out my resume: <a href="Bernardo%20Lopez%20Bautista%20Resume.pdf" target="_blank" rel="noopener noreferrer" class="resume-link">Open Resume PDF</a>';
           addMessage(resumeLink, false, true);
         }, 1000);
       }, 100);
