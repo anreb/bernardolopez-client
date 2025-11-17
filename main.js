@@ -114,8 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (xhr.status >= 200 && xhr.status < 300) {
         try {
           var data = JSON.parse(xhr.responseText);
-          var answer =
-            data.answer || data.message || "I received your question!";
+          var answer = data.message || "I received your question!";
           addMessage(answer, false);
         } catch (e) {
           addMessage("Error parsing response", false);
@@ -125,6 +124,13 @@ document.addEventListener("DOMContentLoaded", function () {
           "Sorry, I encountered an error processing your question.";
         if (xhr.status >= 500) {
           errorMessage = "Server error. Please try again later.";
+        } else if (xhr.status === 400) {
+          try {
+            var errorData = JSON.parse(xhr.responseText);
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            // Use default error message
+          }
         }
         addMessage(errorMessage, false);
       }
@@ -145,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
       chatInput.focus();
     };
 
-    xhr.send(JSON.stringify({ question: question }));
+    xhr.send(JSON.stringify({ message: question }));
   }
 
   sendButton.addEventListener("click", function (e) {
