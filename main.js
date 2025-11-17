@@ -1,5 +1,11 @@
+alert("JavaScript file loaded!");
+
 document.addEventListener("DOMContentLoaded", function () {
   function showToast(message) {
+    if (!document.body) {
+      alert(message);
+      return;
+    }
     var toast = document.createElement("div");
     toast.textContent = message;
     toast.style.cssText =
@@ -16,7 +22,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }, 300);
     }, 3000);
   }
-  showToast("Running JavaScript code");
+
+  setTimeout(function () {
+    showToast("Running JavaScript code");
+  }, 100);
   var chatMessages = document.getElementById("chatMessages");
   var chatMessagesContent = document.querySelector(".chat-messages-content");
   var chatInput = document.getElementById("chatInput");
