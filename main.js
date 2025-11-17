@@ -31,7 +31,11 @@ $(document).ready(function () {
        * Updates input position when keyboard opens/closes
        * Calculates distance from bottom based on visible viewport
        */
+      let isAdjustingScroll = false;
+
       const updateInputPosition = () => {
+        if (isAdjustingScroll) return;
+
         const viewport = window.visualViewport;
         const viewportHeight = viewport.height;
         const offsetTop = viewport.offsetTop;
@@ -43,21 +47,28 @@ $(document).ready(function () {
         chatInputContainer.css("bottom", `${visualBottom}px`);
 
         // Scroll window down to keep input visible above keyboard
-        setTimeout(() => {
-          const inputRect = chatInputContainer[0].getBoundingClientRect();
-          const inputBottom = inputRect.bottom;
+        if (visualBottom > 0) {
+          isAdjustingScroll = true;
+          setTimeout(() => {
+            const inputRect = chatInputContainer[0].getBoundingClientRect();
+            const inputBottom = inputRect.bottom;
 
-          // If input is below visible viewport, scroll down
-          if (inputBottom > viewportHeight) {
-            const scrollAmount = inputBottom - viewportHeight + 20;
-            window.scrollBy(0, scrollAmount);
-          }
-        }, 50);
+            // If input is below visible viewport, scroll down
+            if (inputBottom > viewportHeight) {
+              const scrollAmount = inputBottom - viewportHeight + 20;
+              window.scrollBy(0, scrollAmount);
+            }
+
+            setTimeout(() => {
+              isAdjustingScroll = false;
+            }, 200);
+          }, 50);
+        }
       };
 
       // Listen for viewport changes (keyboard open/close)
+      // Only use resize, not scroll to avoid feedback loops
       window.visualViewport.addEventListener("resize", updateInputPosition);
-      window.visualViewport.addEventListener("scroll", updateInputPosition);
 
       // Update position when input gains focus
       // Multiple timeouts handle different keyboard animation speeds
