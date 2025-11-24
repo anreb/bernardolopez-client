@@ -1,3 +1,89 @@
+// Cookie Consent Management
+(function () {
+  var COOKIE_CONSENT_KEY = "cookieConsent";
+
+  function loadGoogleAnalytics() {
+    // Load gtag.js script
+    var gtagScript = document.createElement("script");
+    gtagScript.async = true;
+    gtagScript.src = "https://www.googletagmanager.com/gtag/js?id=G-EP0W3WXD39";
+    document.head.appendChild(gtagScript);
+
+    // Initialize Google Analytics
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      window.dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "G-EP0W3WXD39");
+  }
+
+  function hideCookieBanner() {
+    var banner = document.getElementById("cookieConsent");
+    if (banner) {
+      banner.classList.add("hiding");
+      setTimeout(function () {
+        banner.classList.add("hidden");
+      }, 300);
+    }
+  }
+
+  function handleCookieConsent(accepted) {
+    try {
+      localStorage.setItem(COOKIE_CONSENT_KEY, accepted ? "accepted" : "declined");
+      if (accepted) {
+        loadGoogleAnalytics();
+      }
+      hideCookieBanner();
+    } catch (e) {
+      // If localStorage fails, just hide the banner
+      hideCookieBanner();
+    }
+  }
+
+  function initCookieConsent() {
+    var consent = null;
+    try {
+      consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+    } catch (e) {
+      // LocalStorage not available
+    }
+
+    if (consent === "accepted") {
+      loadGoogleAnalytics();
+    } else if (consent === null) {
+      // Show banner if no consent is stored
+      var banner = document.getElementById("cookieConsent");
+      if (banner) {
+        banner.classList.remove("hidden");
+      }
+    }
+
+    // Set up event listeners
+    var acceptBtn = document.getElementById("acceptCookies");
+    var declineBtn = document.getElementById("declineCookies");
+
+    if (acceptBtn) {
+      acceptBtn.addEventListener("click", function () {
+        handleCookieConsent(true);
+      });
+    }
+
+    if (declineBtn) {
+      declineBtn.addEventListener("click", function () {
+        handleCookieConsent(false);
+      });
+    }
+  }
+
+  // Initialize cookie consent when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCookieConsent);
+  } else {
+    initCookieConsent();
+  }
+})();
+
 document.addEventListener("DOMContentLoaded", function () {
   var chatMessages = document.getElementById("chatMessages");
   var chatMessagesContent = document.querySelector(".chat-messages-content");

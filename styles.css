@@ -544,3 +544,119 @@ body {
     padding: 3rem;
   }
 }
+
+/* Cookie Consent Banner */
+.cookie-consent {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #202123;
+  border-top: 1px solid #565869;
+  padding: 1.25rem 1.5rem;
+  z-index: 2000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease-out;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.cookie-consent.hidden {
+  display: none;
+}
+
+.cookie-consent.hiding {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.cookie-consent-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.cookie-text {
+  color: #c5c5d2;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+
+.cookie-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.cookie-btn {
+  padding: 0.625rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.cookie-btn-accept {
+  background-color: #19c37d;
+  color: #fff;
+}
+
+.cookie-btn-accept:hover {
+  background-color: #16a169;
+}
+
+.cookie-btn-decline {
+  background-color: #565869;
+  color: #ececf1;
+}
+
+.cookie-btn-decline:hover {
+  background-color: #6e6e80;
+}
+
+/* Mobile adjustments for cookie consent */
+@media (max-width: 768px) {
+  .cookie-consent {
+    padding: 1rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  .cookie-consent-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .cookie-text {
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  .cookie-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cookie-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+  }
+}
